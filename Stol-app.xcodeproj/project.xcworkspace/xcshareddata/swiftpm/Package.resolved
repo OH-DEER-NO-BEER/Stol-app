@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "TwilioVoice",
+        "repositoryURL": "https://github.com/twilio/twilio-voice-ios",
+        "state": {
+          "branch": null,
+          "revision": "075cf26abf9b7e4782600f464b564ae6b5cadc4c",
+          "version": "6.3.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
