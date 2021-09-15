@@ -16,11 +16,10 @@ let twimlParamTo = "to"
 class ViewController: UIViewController {
     //motion manager
     let motionManager = CMMotionManager()
-    var sensorList:[Double] = []
+    var sensorList: [Double] = []
 
     var accessToken: String? = ""
-    
-    
+
     var activeCall: Call?
     var audioDevice: ExampleAVAudioEngineDevice = ExampleAVAudioEngineDevice()
     var callKitProvider: CXProvider
@@ -28,85 +27,84 @@ class ViewController: UIViewController {
     var userInitiatedDisconnect: Bool = false
     var callKitCompletionCallback: ((Bool) -> Void)? = nil
     var calling: Bool = false
-    
-    
+
     @IBOutlet weak var outgoingTextField: UITextField!
     @IBOutlet weak var callButton: UIButton!
     @IBOutlet weak var callControlView: UIView!
     @IBOutlet weak var muteSwitch: UISwitch!
     @IBOutlet weak var speakerSwitch: UISwitch!
     @IBOutlet weak var playMusicButton: UIButton!
-    
+
     @IBOutlet weak var participant: UIView!
     @IBOutlet weak var muteButton: UIButton!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-        self.muteButton.setImage(UIImage(named: "Mute=true"), for: .normal);
-        self.muteButton.setImage(UIImage(named: "Mute=false"), for: .selected)
+
+        muteButton.setImage(UIImage(named: "Mute=true"), for: .normal);
+        muteButton.setImage(UIImage(named: "Mute=false"), for: .selected)
         participant.isHidden = true
-        
+
         let intervalSeconds = 0.4
         // Do any additional setup after loading the view.
-        if motionManager.isDeviceMotionAvailable{
+        if motionManager.isDeviceMotionAvailable {
             motionManager.deviceMotionUpdateInterval = TimeInterval(intervalSeconds)
 
-            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
+            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: { (motion: CMDeviceMotion?, error: Error?) in
                 self.getMotionData(deviceMotion: motion!)
             })
         }
     }
-    func getMotionData(deviceMotion: CMDeviceMotion){
-        self.sensorList = []
+
+    func getMotionData(deviceMotion: CMDeviceMotion) {
+        sensorList = []
         //重力センサ
-        self.sensorList.append(deviceMotion.gravity.x)
-        self.sensorList.append(deviceMotion.gravity.y)
-        self.sensorList.append(deviceMotion.gravity.z)
-        
-        self.sensorList.append(deviceMotion.rotationRate.x)
-        self.sensorList.append(deviceMotion.rotationRate.y)
-        self.sensorList.append(deviceMotion.rotationRate.z)
-        
-        self.sensorList.append(deviceMotion.attitude.pitch)
-        self.sensorList.append(deviceMotion.attitude.roll)
-        self.sensorList.append(deviceMotion.attitude.yaw)
-        
-        
+        sensorList.append(deviceMotion.gravity.x)
+        sensorList.append(deviceMotion.gravity.y)
+        sensorList.append(deviceMotion.gravity.z)
+
+        sensorList.append(deviceMotion.rotationRate.x)
+        sensorList.append(deviceMotion.rotationRate.y)
+        sensorList.append(deviceMotion.rotationRate.z)
+
+        sensorList.append(deviceMotion.attitude.pitch)
+        sensorList.append(deviceMotion.attitude.roll)
+        sensorList.append(deviceMotion.attitude.yaw)
+
         let intercept = -1.80131316
         var sum = intercept
-        let coefficient =  [0.30223284, -2.62991929, 1.52691657, -1.28418032, -0.1064995,-0.02088443, 3.26271071, 0.46824078, 0.22321698]
+        let coefficient = [0.30223284, -2.62991929, 1.52691657, -1.28418032, -0.1064995, -0.02088443, 3.26271071, 0.46824078, 0.22321698]
 
-        for i in 0..<9{
-            sum = sum + coefficient[i] * self.sensorList[i]
+        for i in 0..<9 {
+            sum = sum + coefficient[i] * sensorList[i]
         }
-        
+
         print(sum)
-        
-        
+
+
         //接続の判定
         if sum > 2 && calling == false {
             print("stand up")
-            
+
             //stopDevicemotion()
             phoneCall()
             calling = true
-            
-        }else{
+
+        } else {
             print("sit down")
         }
-        
+
     }
- 
+
     // センサー取得を止める場合
-    func stopDevicemotion(){
+    func stopDevicemotion() {
         if (motionManager.isDeviceMotionActive) {
             motionManager.stopDeviceMotionUpdates()
-            
+
         }
     }
-    
+
 
     required init?(coder aDecoder: NSCoder) {
         let configuration = CXProviderConfiguration(localizedName: "Stol-app")
@@ -119,24 +117,24 @@ class ViewController: UIViewController {
         super.init(coder: aDecoder)
 
         callKitProvider.setDelegate(self, queue: nil)
-        
+
         TwilioVoiceSDK.audioDevice = audioDevice
     }
-    
+
     deinit {
         // CallKit has an odd API contract where the developer must call invalidate or the CXProvider is leaked.
         callKitProvider.invalidate()
     }
-    
+
     func toggleUIState(isEnabled: Bool, showCallControl: Bool) {
         callButton.isEnabled = isEnabled
         callControlView.isHidden = !showCallControl;
         muteSwitch.isOn = !showCallControl;
         speakerSwitch.isOn = showCallControl;
     }
-    
+
     // MARK: AVAudioSession
-    
+
     func toggleAudioRoute(toSpeaker: Bool) {
         // The mode set by the Voice SDK is "VoiceChat" so the default audio route is the built-in receiver. Use port override to switch the route.
         do {
@@ -145,34 +143,36 @@ class ViewController: UIViewController {
             NSLog(error.localizedDescription)
         }
     }
-    
+
     func showMicrophoneAccessRequest(_ uuid: UUID, _ handle: String) {
         let alertController = UIAlertController(title: "Voice Quick Start",
-                                                message: "Microphone permission not granted",
-                                                preferredStyle: .alert)
-        
+                message: "Microphone permission not granted",
+                preferredStyle: .alert)
+
         let continueWithoutMic = UIAlertAction(title: "Continue without microphone", style: .default) { [weak self] _ in
             self?.performStartCallAction(uuid: uuid, handle: handle)
         }
-        
+
         let goToSettings = UIAlertAction(title: "Settings", style: .default) { _ in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                                      options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
-                                      completionHandler: nil)
+                    options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
+                    completionHandler: nil)
         }
-        
+
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
             self?.toggleUIState(isEnabled: true, showCallControl: false)
         }
-        
-        [continueWithoutMic, goToSettings, cancel].forEach { alertController.addAction($0) }
-        
+
+        [continueWithoutMic, goToSettings, cancel].forEach {
+            alertController.addAction($0)
+        }
+
         present(alertController, animated: true, completion: nil)
     }
-    
+
     func checkRecordPermission(completion: @escaping (_ permissionGranted: Bool) -> Void) {
         let permissionStatus = AVAudioSession.sharedInstance().recordPermission
-        
+
         switch permissionStatus {
         case .granted:
             // Record permission already granted.
@@ -183,7 +183,9 @@ class ViewController: UIViewController {
         case .undetermined:
             // Requesting record permission.
             // Optional: pop up app dialog to let the users know if they want to request.
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in completion(granted) }
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                completion(granted)
+            }
         default:
             completion(false)
         }
@@ -194,49 +196,51 @@ class ViewController: UIViewController {
             userInitiatedDisconnect = true
             performEndCallAction(uuid: activeCall!.uuid!)
             toggleUIState(isEnabled: false, showCallControl: false)
-            
+
             return
         }
-        
+
         checkRecordPermission { [weak self] permissionGranted in
             let uuid = UUID()
             let handle = "Voice Bot"
-            
+
             guard !permissionGranted else {
                 self?.performStartCallAction(uuid: uuid, handle: handle)
                 return
             }
-        
+
             self?.showMicrophoneAccessRequest(uuid, handle)
         }
     }
-    
+
     @IBAction func callbuttonTap(_ sender: Any) {
-        
+
     }
-    
-    
+
+
     @IBAction func muteSwitchToggled(_ sender: UISwitch) {
-        guard let activeCall = activeCall else { return }
-        
+        guard let activeCall = activeCall else {
+            return
+        }
+
         activeCall.isMuted = sender.isOn
     }
-    
+
     @IBAction func muteButton(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected;
     }
-    
+
     @IBAction func voicechatswitchTapped(_ sender: Any) {
     }
-    
+
     @IBAction func disconnectswitchTapped(_ sender: Any) {
     }
-    
-    
+
+
     @IBAction func speakerSwitchToggled(_ sender: UISwitch) {
         toggleAudioRoute(toSpeaker: sender.isOn)
     }
-    
+
     @IBAction func playMusicButtonTapped(_ sender: UIButton) {
         audioDevice.playMusic()
     }
@@ -247,39 +251,39 @@ class ViewController: UIViewController {
 extension ViewController: CallDelegate {
     func callDidStartRinging(call: Call) {
         NSLog("callDidStartRinging:")
-        
+
         callButton.setTitle("Ringing", for: .normal)
     }
-    
+
     func callDidConnect(call: Call) {
         NSLog("callDidConnect:")
-        
+
         if let callKitCompletionCallback = callKitCompletionCallback {
             callKitCompletionCallback(true)
         }
-        
+
         callButton.setTitle("Hang Up", for: .normal)
         toggleUIState(isEnabled: true, showCallControl: true)
         toggleAudioRoute(toSpeaker: true)
     }
-    
+
     func call(call: Call, isReconnectingWithError error: Error) {
         NSLog("call:isReconnectingWithError:")
-        
+
         callButton.setTitle("Reconnecting", for: .normal)
         toggleUIState(isEnabled: false, showCallControl: false)
     }
-    
+
     func callDidReconnect(call: Call) {
         NSLog("callDidReconnect:")
-        
+
         callButton.setTitle("Hang Up", for: .normal)
         toggleUIState(isEnabled: true, showCallControl: true)
     }
-    
+
     func callDidFailToConnect(call: Call, error: Error) {
         NSLog("Call failed to connect: \(error.localizedDescription)")
-        
+
         if let completion = callKitCompletionCallback {
             completion(false)
         }
@@ -287,37 +291,37 @@ extension ViewController: CallDelegate {
         performEndCallAction(uuid: call.uuid!)
         callDisconnected(call)
     }
-    
+
     func callDidDisconnect(call: Call, error: Error?) {
         if let error = error {
             NSLog("Call failed: \(error.localizedDescription)")
         } else {
             NSLog("Call disconnected")
         }
-        
+
         if !userInitiatedDisconnect {
             var reason = CXCallEndedReason.remoteEnded
-            
+
             if error != nil {
                 reason = .failed
             }
-            
+
             callKitProvider.reportCall(with: call.uuid!, endedAt: Date(), reason: reason)
         }
 
         callDisconnected(call)
     }
-    
+
     func callDisconnected(_ call: Call) {
         if call == activeCall {
             activeCall = nil
         }
-        
+
         userInitiatedDisconnect = false
 
         toggleUIState(isEnabled: true, showCallControl: false)
         callButton.setTitle("Call", for: .normal)
-        self.calling = false
+        calling = false
     }
 }
 
@@ -349,9 +353,9 @@ extension ViewController: CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
         NSLog("provider:performStartCallAction:")
-        
+
         provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: Date())
-        
+
         performVoiceCall(uuid: action.callUUID, client: "") { success in
             if success {
                 provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
@@ -364,17 +368,17 @@ extension ViewController: CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         NSLog("provider:performEndCallAction:")
-        
+
         if let call = activeCall {
             call.disconnect()
         }
 
         action.fulfill()
     }
-    
+
     func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
         NSLog("provider:performSetHeldAction:")
-        
+
         if let call = activeCall {
             call.isOnHold = action.isOnHold
             action.fulfill()
@@ -382,7 +386,7 @@ extension ViewController: CXProviderDelegate {
             action.fail()
         }
     }
-    
+
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
         NSLog("provider:performSetMutedAction:")
 
@@ -394,7 +398,7 @@ extension ViewController: CXProviderDelegate {
         }
     }
 
-    
+
     // MARK: Call Kit Actions
     func performStartCallAction(uuid: UUID, handle: String) {
         let callHandle = CXHandle(type: .generic, value: handle)
@@ -410,7 +414,7 @@ extension ViewController: CXProviderDelegate {
             NSLog("StartCallAction transaction request successful")
 
             let callUpdate = CXCallUpdate()
-            
+
             callUpdate.remoteHandle = callHandle
             callUpdate.supportsDTMF = true
             callUpdate.supportsHolding = true
@@ -426,7 +430,7 @@ extension ViewController: CXProviderDelegate {
         let callHandle = CXHandle(type: .generic, value: from)
 
         let callUpdate = CXCallUpdate()
-        
+
         callUpdate.remoteHandle = callHandle
         callUpdate.supportsDTMF = true
         callUpdate.supportsHolding = true
@@ -456,41 +460,41 @@ extension ViewController: CXProviderDelegate {
             }
         }
     }
-    
+
     func performVoiceCall(uuid: UUID, client: String?, completionHandler: @escaping (Bool) -> Void) {
         guard let token = accessToken, token.count > 0 else {
             completionHandler(false)
             return
         }
-        
+
         let connectOptions = ConnectOptions(accessToken: token) { builder in
             builder.params = [twimlParamTo: self.outgoingTextField.text ?? ""]
             builder.uuid = uuid
         }
-        
+
         let call = TwilioVoiceSDK.connect(options: connectOptions, delegate: self)
         activeCall = call
         callKitCompletionCallback = completionHandler
     }
-    
-    func phoneCall(){
+
+    func phoneCall() {
         guard activeCall == nil else {
             userInitiatedDisconnect = true
             performEndCallAction(uuid: activeCall!.uuid!)
             toggleUIState(isEnabled: false, showCallControl: false)
-            
+
             return
         }
-        
+
         checkRecordPermission { [weak self] permissionGranted in
             let uuid = UUID()
             let handle = "Voice Bot"
-            
+
             guard !permissionGranted else {
                 self?.performStartCallAction(uuid: uuid, handle: handle)
                 return
             }
-        
+
             self?.showMicrophoneAccessRequest(uuid, handle)
         }
     }
