@@ -15,6 +15,7 @@
 		8F09DB93243D1AD300C6994E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB91243D1AD300C6994E /* LaunchScreen.storyboard */; };
 		8F09DB9F243D202500C6994E /* mixLoop.caf in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB9C243D202500C6994E /* mixLoop.caf */; };
 		8F09DBA0243D202500C6994E /* ExampleAVAudioEngineDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB9E243D202500C6994E /* ExampleAVAudioEngineDevice.m */; };
+		E9A11186683AA51B79DD5148 /* Pods_Stol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A52F4A41328534975EE045A6 /* Pods_Stol.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,9 @@
 		8F09DB9C243D202500C6994E /* mixLoop.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mixLoop.caf; sourceTree = "<group>"; };
 		8F09DB9D243D202500C6994E /* AudioDevices-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AudioDevices-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F09DB9E243D202500C6994E /* ExampleAVAudioEngineDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleAVAudioEngineDevice.m; sourceTree = "<group>"; };
+		A52F4A41328534975EE045A6 /* Pods_Stol.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Stol.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF8EE2FDE8030B0319D1B020 /* Pods-Stol.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stol.release.xcconfig"; path = "Target Support Files/Pods-Stol/Pods-Stol.release.xcconfig"; sourceTree = "<group>"; };
+		F40F31F872681403E3014E1A /* Pods-Stol.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stol.debug.xcconfig"; path = "Target Support Files/Pods-Stol/Pods-Stol.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,18 +41,39 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F03119425C8B3E800DE2236 /* TwilioVoice in Frameworks */,
+				E9A11186683AA51B79DD5148 /* Pods_Stol.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		284ECE457063B9B6A81F3905 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A52F4A41328534975EE045A6 /* Pods_Stol.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		416CD760BF1380DD59988FAE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F40F31F872681403E3014E1A /* Pods-Stol.debug.xcconfig */,
+				EF8EE2FDE8030B0319D1B020 /* Pods-Stol.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		8F09DB7A243D1ACE00C6994E = {
 			isa = PBXGroup;
 			children = (
 				8F09DB85243D1ACE00C6994E /* Stol-app */,
 				8F09DB9A243D202500C6994E /* AudioDevices */,
 				8F09DB84243D1ACE00C6994E /* Products */,
+				416CD760BF1380DD59988FAE /* Pods */,
+				284ECE457063B9B6A81F3905 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,9 +117,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F09DB97243D1AD300C6994E /* Build configuration list for PBXNativeTarget "Stol" */;
 			buildPhases = (
+				42C3C4FCBD792AA20B57BC3A /* [CP] Check Pods Manifest.lock */,
 				8F09DB7F243D1ACE00C6994E /* Sources */,
 				8F09DB80243D1ACE00C6994E /* Frameworks */,
 				8F09DB81243D1ACE00C6994E /* Resources */,
+				EB42CA205936EEA29C8E7C58 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -157,6 +184,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		42C3C4FCBD792AA20B57BC3A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Stol-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EB42CA205936EEA29C8E7C58 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stol/Pods-Stol-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stol/Pods-Stol-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stol/Pods-Stol-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8F09DB7F243D1ACE00C6994E /* Sources */ = {
@@ -307,6 +376,7 @@
 		};
 		8F09DB98243D1AD300C6994E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F40F31F872681403E3014E1A /* Pods-Stol.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MJTTW249FW;
@@ -325,6 +395,7 @@
 		};
 		8F09DB99243D1AD300C6994E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EF8EE2FDE8030B0319D1B020 /* Pods-Stol.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MJTTW249FW;

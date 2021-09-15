@@ -40,8 +40,8 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
 
+        // Do any additional setup after loading the view.
         muteButton.setImage(UIImage(named: "Mute=true"), for: .normal);
         muteButton.setImage(UIImage(named: "Mute=false"), for: .selected)
         participant.isHidden = true
@@ -82,7 +82,6 @@ class ViewController: UIViewController {
 
         print(sum)
 
-
         //接続の判定
         if sum > 2 && calling == false {
             print("stand up")
@@ -104,7 +103,6 @@ class ViewController: UIViewController {
 
         }
     }
-
 
     required init?(coder aDecoder: NSCoder) {
         let configuration = CXProviderConfiguration(localizedName: "Stol-app")
@@ -134,7 +132,6 @@ class ViewController: UIViewController {
     }
 
     // MARK: AVAudioSession
-
     func toggleAudioRoute(toSpeaker: Bool) {
         // The mode set by the Voice SDK is "VoiceChat" so the default audio route is the built-in receiver. Use port override to switch the route.
         do {
@@ -214,9 +211,8 @@ class ViewController: UIViewController {
     }
 
     @IBAction func callbuttonTap(_ sender: Any) {
-
+        // TODO Call
     }
-
 
     @IBAction func muteSwitchToggled(_ sender: UISwitch) {
         guard let activeCall = activeCall else {
@@ -230,24 +226,16 @@ class ViewController: UIViewController {
         sender.isSelected = !sender.isSelected;
     }
 
-    @IBAction func voicechatswitchTapped(_ sender: Any) {
-    }
-
-    @IBAction func disconnectswitchTapped(_ sender: Any) {
-    }
-
-
-    @IBAction func speakerSwitchToggled(_ sender: UISwitch) {
+    @IBAction func voicechatswitchTapped(_ sender: UISwitch) {
         toggleAudioRoute(toSpeaker: sender.isOn)
     }
 
-    @IBAction func playMusicButtonTapped(_ sender: UIButton) {
+    @IBAction func disconnectswitchTapped(_ sender: UISwitch) {
         audioDevice.playMusic()
     }
 }
 
 // MARK: - TVOCallDelegate
-
 extension ViewController: CallDelegate {
     func callDidStartRinging(call: Call) {
         NSLog("callDidStartRinging:")
@@ -326,7 +314,6 @@ extension ViewController: CallDelegate {
 }
 
 // MARK: - CXProviderDelegate
-
 extension ViewController: CXProviderDelegate {
     func providerDidReset(_ provider: CXProvider) {
         NSLog("providerDidReset:")
@@ -397,7 +384,6 @@ extension ViewController: CXProviderDelegate {
             action.fail()
         }
     }
-
 
     // MARK: Call Kit Actions
     func performStartCallAction(uuid: UUID, handle: String) {
