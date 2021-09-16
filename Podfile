@@ -7,5 +7,7 @@ target 'Stol' do
 
   # Pods for Stol
   pod 'Firebase/Analytics'
+  pod 'RxSwift'
+  pod 'RxCocoa'
 
 end
