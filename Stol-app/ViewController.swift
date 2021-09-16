@@ -16,7 +16,6 @@ let twimlParamTo = "to"
 class ViewController: UIViewController {
     //motion manager
     let motionManager = CMMotionManager()
-    var sensorList: [Double] = []
 
     var accessToken: String? = ""
 
@@ -52,13 +51,24 @@ class ViewController: UIViewController {
             motionManager.deviceMotionUpdateInterval = TimeInterval(intervalSeconds)
 
             motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: { (motion: CMDeviceMotion?, error: Error?) in
-                self.getMotionData(deviceMotion: motion!)
+
+                //接続の判定
+                if self.getMotionThreshold(deviceMotion: motion!) > 2 && !self.calling {
+                    print("stand up")
+
+                    //stopDevicemotion()
+                    self.phoneCall()
+                    self.calling = true
+
+                } else {
+                    print("sit down")
+                }
             })
         }
     }
 
-    func getMotionData(deviceMotion: CMDeviceMotion) {
-        sensorList = []
+    func getMotionThreshold(deviceMotion: CMDeviceMotion)-> Double {
+        var sensorList: [Double] = []
         //重力センサ
         sensorList.append(deviceMotion.gravity.x)
         sensorList.append(deviceMotion.gravity.y)
@@ -72,8 +82,7 @@ class ViewController: UIViewController {
         sensorList.append(deviceMotion.attitude.roll)
         sensorList.append(deviceMotion.attitude.yaw)
 
-        let intercept = -1.80131316
-        var sum = intercept
+        var sum: Double = -1.80131316
         let coefficient = [0.30223284, -2.62991929, 1.52691657, -1.28418032, -0.1064995, -0.02088443, 3.26271071, 0.46824078, 0.22321698]
 
         for i in 0..<9 {
@@ -81,26 +90,13 @@ class ViewController: UIViewController {
         }
 
         print(sum)
-
-        //接続の判定
-        if sum > 2 && calling == false {
-            print("stand up")
-
-            //stopDevicemotion()
-            phoneCall()
-            calling = true
-
-        } else {
-            print("sit down")
-        }
-
+        return sum
     }
 
     // センサー取得を止める場合
     func stopDevicemotion() {
         if (motionManager.isDeviceMotionActive) {
             motionManager.stopDeviceMotionUpdates()
-
         }
     }
 
