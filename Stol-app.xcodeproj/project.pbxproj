@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		301CE1AFCC7D6580B12C1225 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CEDA9FF1B2EEA0884B327 /* MotionManager.swift */; };
 		8F03119425C8B3E800DE2236 /* TwilioVoice in Frameworks */ = {isa = PBXBuildFile; productRef = 8F03119325C8B3E800DE2236 /* TwilioVoice */; };
 		8F09DB87243D1ACE00C6994E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB86243D1ACE00C6994E /* AppDelegate.swift */; };
 		8F09DB8B243D1ACE00C6994E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB8A243D1ACE00C6994E /* ViewController.swift */; };
@@ -20,7 +19,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		301CEDA9FF1B2EEA0884B327 /* MotionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		8F09DB83243D1ACE00C6994E /* Stol.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stol.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F09DB86243D1ACE00C6994E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F09DB8A243D1ACE00C6994E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,14 +54,6 @@
 				A52F4A41328534975EE045A6 /* Pods_Stol.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		301CEAEB25A7B07378C2D71F /* motion */ = {
-			isa = PBXGroup;
-			children = (
-				301CEDA9FF1B2EEA0884B327 /* MotionManager.swift */,
-			);
-			path = motion;
 			sourceTree = "<group>";
 		};
 		416CD760BF1380DD59988FAE /* Pods */ = {
@@ -103,7 +93,6 @@
 				8F09DB8F243D1AD300C6994E /* Assets.xcassets */,
 				8F09DB91243D1AD300C6994E /* LaunchScreen.storyboard */,
 				8F09DB94243D1AD300C6994E /* Info.plist */,
-				301CEAEB25A7B07378C2D71F /* motion */,
 			);
 			path = "Stol-app";
 			sourceTree = "<group>";
