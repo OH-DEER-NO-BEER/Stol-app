@@ -51,34 +51,5 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 
-	<key>CLIENT_ID</key>
-	<string>1002865838703-o3t5t2cb874dea6a8oaits5q3d693ft7.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1002865838703-o3t5t2cb874dea6a8oaits5q3d693ft7</string>
-	<key>API_KEY</key>
-	<string>AIzaSyBuC1ztha6XPfrFSow3p-J__s9amIg9ghE</string>
-	<key>GCM_SENDER_ID</key>
-	<string>1002865838703</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>com.deers.stolapp</string>
-	<key>PROJECT_ID</key>
-	<string>stol-a754d</string>
-	<key>STORAGE_BUCKET</key>
-	<string>stol-a754d.appspot.com</string>
-	<key>IS_ADS_ENABLED</key>
-	<false></false>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
-	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
-	<key>IS_GCM_ENABLED</key>
-	<true></true>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:1002865838703:ios:a12e7ebe1699ab088f9b9a</string>
-
 </dict>
 </plist>
