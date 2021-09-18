@@ -1,10 +1,8 @@
-import CallKit
 import UIKit
 
-import TwilioVoice
+import TwilioVideo
 import RxCocoa
 import RxSwift
-
 
 let twimlParamTo = "to"
 
@@ -13,17 +11,9 @@ class StolViewController: UIViewController {
     let motionManager = MotionManager()
     let firebaseManager = FirebaseManager()
 
-    var accessToken: String? = ""
-
-    var activeCall: Call?
-    var audioDevice: ExampleAVAudioEngineDevice = ExampleAVAudioEngineDevice()
-    var callKitProvider: CXProvider
-    var callKitCallController: CXCallController
-    var userInitiatedDisconnect: Bool = false
-    var callKitCompletionCallback: ((Bool) -> Void)? = nil
-    var calling: Bool = false
-
     var disposeBag = DisposeBag()
+
+    var calling: Bool = false
 
     @IBOutlet weak var outgoingTextField: UITextField!
     @IBOutlet weak var callButton: UIButton!
@@ -35,8 +25,37 @@ class StolViewController: UIViewController {
     @IBOutlet weak var participant: UIView!
     @IBOutlet weak var muteButton: UIButton!
 
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
+    // MARK:- View Controller Members
+
+    // Configure access token manually for testing, if desired! Create one manually in the console
+    // at https://www.twilio.com/console/video/runtime/testing-tools
+    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzE5ODU0MzgiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJhbGljZSIsInZpZGVvIjp7fX0sImlhdCI6MTYzMTk4NTQzOCwiZXhwIjoxNjMxOTg5MDM4LCJpc3MiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwIiwic3ViIjoiQUM5NjM2ZDJhYzk3NjMxNjIzYmNiNzdiMGM3NjI1MjBkNiJ9.ZaW6JVVpjx1Na6O6h1BIQP5LJo1bK46IyW8kAL0Dgwk"
+
+    // Configure remote URL to fetch token from
+    var tokenUrl = "http://localhost:8000/token.php"
+
+    // Video SDK components
+    var room: Room?
+    var camera: CameraSource?
+    var localVideoTrack: LocalVideoTrack?
+    var localAudioTrack: LocalAudioTrack?
+    var remoteParticipant: RemoteParticipant?
+
+    var isAutoConnect = true
+    var isAutoDisconnect = true
+
+    // MARK:- UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
+        /*
+        AVCaptureDevice.requestAccess(for: AVMediaType.audio, completionHandler: {(granted: Bool) in})
+        AVAudioSession.requestRecordPermission(<#T##self: AVAudioSession##AVAudioSession#>)
+         */
+        self.title = "Stol"
 
         // Do any additional setup after loading the view.
         muteButton.setImage(UIImage(named: "Mute=true"), for: .normal);
@@ -48,7 +67,7 @@ class StolViewController: UIViewController {
                     if self.motionManager.getMotionThreshold(deviceMotion: motion!) > 2 {
                         self.firebaseManager.standUp()
 
-                        if (!self.calling) {
+                        if (self.isAutoConnect && !self.calling) {
                             //stopDevicemotion()
                             self.phoneCall()
                             self.calling = true
@@ -58,6 +77,10 @@ class StolViewController: UIViewController {
 
                     } else {
                         self.firebaseManager.sitDown()
+                        if (self.isAutoDisconnect && self.calling) {
+                            self.room!.disconnect()
+                        }
+
                         print("sit down")
                     }
                 })
@@ -71,26 +94,6 @@ class StolViewController: UIViewController {
                     })
                     .disposed(by: disposeBag)
         }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        let configuration = CXProviderConfiguration(localizedName: "Stol-app")
-        configuration.maximumCallGroups = 1
-        configuration.maximumCallsPerCallGroup = 1
-
-        callKitProvider = CXProvider(configuration: configuration)
-        callKitCallController = CXCallController()
-
-        super.init(coder: aDecoder)
-
-        callKitProvider.setDelegate(self, queue: nil)
-
-        TwilioVoiceSDK.audioDevice = audioDevice
-    }
-
-    deinit {
-        // CallKit has an odd API contract where the developer must call invalidate or the CXProvider is leaked.
-        callKitProvider.invalidate()
     }
 
     func toggleUIState(isEnabled: Bool, showCallControl: Bool) {
@@ -110,343 +113,244 @@ class StolViewController: UIViewController {
         }
     }
 
-    func showMicrophoneAccessRequest(_ uuid: UUID, _ handle: String) {
-        let alertController = UIAlertController(title: "Voice Quick Start",
-                message: "Microphone permission not granted",
-                preferredStyle: .alert)
-
-        let continueWithoutMic = UIAlertAction(title: "Continue without microphone", style: .default) { [weak self] _ in
-            self?.performStartCallAction(uuid: uuid, handle: handle)
-        }
-
-        let goToSettings = UIAlertAction(title: "Settings", style: .default) { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                    options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
-                    completionHandler: nil)
-        }
-
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
-            self?.toggleUIState(isEnabled: true, showCallControl: false)
-        }
-
-        [continueWithoutMic, goToSettings, cancel].forEach {
-            alertController.addAction($0)
-        }
-
-        present(alertController, animated: true, completion: nil)
-    }
-
-    func checkRecordPermission(completion: @escaping (_ permissionGranted: Bool) -> Void) {
-        let permissionStatus = AVAudioSession.sharedInstance().recordPermission
-
-        switch permissionStatus {
-        case .granted:
-            // Record permission already granted.
-            completion(true)
-        case .denied:
-            // Record permission denied.
-            completion(false)
-        case .undetermined:
-            // Requesting record permission.
-            // Optional: pop up app dialog to let the users know if they want to request.
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                completion(granted)
-            }
-        default:
-            completion(false)
-        }
-    }
-
     @IBAction func callButtonTap(_ sender: Any) {
-        guard activeCall == nil else {
-            userInitiatedDisconnect = true
-            performEndCallAction(uuid: activeCall!.uuid!)
-            toggleUIState(isEnabled: false, showCallControl: false)
-
-            return
-        }
-
-        checkRecordPermission { [weak self] permissionGranted in
-            let uuid = UUID()
-            let handle = "Voice Bot"
-
-            guard !permissionGranted else {
-                self?.performStartCallAction(uuid: uuid, handle: handle)
-                return
-            }
-
-            self?.showMicrophoneAccessRequest(uuid, handle)
-        }
-    }
-
-    @IBAction func muteSwitchToggled(_ sender: UISwitch) {
-        guard let activeCall = activeCall else {
-            return
-        }
-
-        activeCall.isMuted = sender.isOn
-    }
-
-    @IBAction func muteButton(_ sender: UIButton) {
-        sender.isSelected = !sender.isSelected;
-    }
-
-    @IBAction func voicechatSwitchTapped(_ sender: UISwitch) {
-        toggleAudioRoute(toSpeaker: sender.isOn)
-    }
-
-    @IBAction func disconnectSwitchTapped(_ sender: UISwitch) {
-        audioDevice.playMusic()
-    }
-}
-
-// MARK: - TVOCallDelegate
-extension StolViewController: CallDelegate {
-    func callDidStartRinging(call: Call) {
-        NSLog("callDidStartRinging:")
-
-        callButton.setTitle("Ringing", for: .normal)
-    }
-
-    func callDidConnect(call: Call) {
-        NSLog("callDidConnect:")
-
-        if let callKitCompletionCallback = callKitCompletionCallback {
-            callKitCompletionCallback(true)
-        }
-
-        callButton.setTitle("Hang Up", for: .normal)
-        toggleUIState(isEnabled: true, showCallControl: true)
-        toggleAudioRoute(toSpeaker: true)
-    }
-
-    func call(call: Call, isReconnectingWithError error: Error) {
-        NSLog("call:isReconnectingWithError:")
-
-        callButton.setTitle("Reconnecting", for: .normal)
-        toggleUIState(isEnabled: false, showCallControl: false)
-    }
-
-    func callDidReconnect(call: Call) {
-        NSLog("callDidReconnect:")
-
-        callButton.setTitle("Hang Up", for: .normal)
-        toggleUIState(isEnabled: true, showCallControl: true)
-    }
-
-    func callDidFailToConnect(call: Call, error: Error) {
-        NSLog("Call failed to connect: \(error.localizedDescription)")
-
-        if let completion = callKitCompletionCallback {
-            completion(false)
-        }
-
-        performEndCallAction(uuid: call.uuid!)
-        callDisconnected(call)
-    }
-
-    func callDidDisconnect(call: Call, error: Error?) {
-        if let error = error {
-            NSLog("Call failed: \(error.localizedDescription)")
-        } else {
-            NSLog("Call disconnected")
-        }
-
-        if !userInitiatedDisconnect {
-            var reason = CXCallEndedReason.remoteEnded
-
-            if error != nil {
-                reason = .failed
-            }
-
-            callKitProvider.reportCall(with: call.uuid!, endedAt: Date(), reason: reason)
-        }
-
-        callDisconnected(call)
-    }
-
-    func callDisconnected(_ call: Call) {
-        if call == activeCall {
-            activeCall = nil
-        }
-
-        userInitiatedDisconnect = false
-
-        toggleUIState(isEnabled: true, showCallControl: false)
-        callButton.setTitle("Call", for: .normal)
-        calling = false
-    }
-}
-
-// MARK: - CXProviderDelegate
-extension StolViewController: CXProviderDelegate {
-    func providerDidReset(_ provider: CXProvider) {
-        NSLog("providerDidReset:")
-        audioDevice.isEnabled = false
-    }
-
-    func providerDidBegin(_ provider: CXProvider) {
-        NSLog("providerDidBegin")
-    }
-
-    func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-        NSLog("provider:didActivateAudioSession:")
-        audioDevice.isEnabled = true
-    }
-
-    func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
-        NSLog("provider:didDeactivateAudioSession:")
-        audioDevice.isEnabled = false
-    }
-
-    func provider(_ provider: CXProvider, timedOutPerforming action: CXAction) {
-        NSLog("provider:timedOutPerformingAction:")
-    }
-
-    func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
-        NSLog("provider:performStartCallAction:")
-
-        provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: Date())
-
-        performVoiceCall(uuid: action.callUUID, client: "") { success in
-            if success {
-                provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
-                action.fulfill()
-            } else {
-                action.fail()
-            }
-        }
-    }
-
-    func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-        NSLog("provider:performEndCallAction:")
-
-        if let call = activeCall {
-            call.disconnect()
-        }
-
-        action.fulfill()
-    }
-
-    func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
-        NSLog("provider:performSetHeldAction:")
-
-        if let call = activeCall {
-            call.isOnHold = action.isOnHold
-            action.fulfill()
-        } else {
-            action.fail()
-        }
-    }
-
-    func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
-        NSLog("provider:performSetMutedAction:")
-
-        if let call = activeCall {
-            call.isMuted = action.isMuted
-            action.fulfill()
-        } else {
-            action.fail()
-        }
-    }
-
-    // MARK: Call Kit Actions
-    func performStartCallAction(uuid: UUID, handle: String) {
-        let callHandle = CXHandle(type: .generic, value: handle)
-        let startCallAction = CXStartCallAction(call: uuid, handle: callHandle)
-        let transaction = CXTransaction(action: startCallAction)
-
-        callKitCallController.request(transaction) { error in
-            if let error = error {
-                NSLog("StartCallAction transaction request failed: \(error.localizedDescription)")
-                return
-            }
-
-            NSLog("StartCallAction transaction request successful")
-
-            let callUpdate = CXCallUpdate()
-
-            callUpdate.remoteHandle = callHandle
-            callUpdate.supportsDTMF = true
-            callUpdate.supportsHolding = true
-            callUpdate.supportsGrouping = false
-            callUpdate.supportsUngrouping = false
-            callUpdate.hasVideo = false
-
-            self.callKitProvider.reportCall(with: uuid, updated: callUpdate)
-        }
-    }
-
-    func reportIncomingCall(from: String, uuid: UUID) {
-        let callHandle = CXHandle(type: .generic, value: from)
-
-        let callUpdate = CXCallUpdate()
-
-        callUpdate.remoteHandle = callHandle
-        callUpdate.supportsDTMF = true
-        callUpdate.supportsHolding = true
-        callUpdate.supportsGrouping = false
-        callUpdate.supportsUngrouping = false
-        callUpdate.hasVideo = false
-
-        callKitProvider.reportNewIncomingCall(with: uuid, update: callUpdate) { error in
-            if let error = error {
-                NSLog("Failed to report incoming call successfully: \(error.localizedDescription).")
-            } else {
-                NSLog("Incoming call successfully reported.")
-            }
-        }
-    }
-
-    func performEndCallAction(uuid: UUID) {
-
-        let endCallAction = CXEndCallAction(call: uuid)
-        let transaction = CXTransaction(action: endCallAction)
-
-        callKitCallController.request(transaction) { error in
-            if let error = error {
-                NSLog("EndCallAction transaction request failed: \(error.localizedDescription).")
-            } else {
-                NSLog("EndCallAction transaction request successful")
-            }
-        }
-    }
-
-    func performVoiceCall(uuid: UUID, client: String?, completionHandler: @escaping (Bool) -> Void) {
-        guard let token = accessToken, token.count > 0 else {
-            completionHandler(false)
-            return
-        }
-
-        let connectOptions = ConnectOptions(accessToken: token) { builder in
-            builder.params = [twimlParamTo: self.outgoingTextField.text ?? ""]
-            builder.uuid = uuid
-        }
-
-        let call = TwilioVoiceSDK.connect(options: connectOptions, delegate: self)
-        activeCall = call
-        callKitCompletionCallback = completionHandler
+        // Configure access token either from server or manually.
+        // If the default wasn't changed, try fetching from server.
+        phoneCall()
     }
 
     func phoneCall() {
-        guard activeCall == nil else {
-            userInitiatedDisconnect = true
-            performEndCallAction(uuid: activeCall!.uuid!)
-            toggleUIState(isEnabled: false, showCallControl: false)
-
+        if calling {
             return
         }
 
-        checkRecordPermission { [weak self] permissionGranted in
-            let uuid = UUID()
-            let handle = "Voice Bot"
-
-            guard !permissionGranted else {
-                self?.performStartCallAction(uuid: uuid, handle: handle)
+        if (accessToken == "TWILIO_ACCESS_TOKEN") {
+            do {
+                accessToken = try TokenUtils.fetchToken(url: tokenUrl)
+            } catch {
+                let message = "Failed to fetch access token"
+                logMessage(messageText: message)
                 return
             }
-
-            self?.showMicrophoneAccessRequest(uuid, handle)
         }
+
+        calling = true
+
+        // Prepare local media which we will share with Room Participants.
+        self.prepareLocalMedia()
+
+        // Preparing the connect options with the access token that we fetched (or hardcoded).
+        let connectOptions = ConnectOptions(token: accessToken) { (builder) in
+
+            // Use the local media that we prepared earlier.
+            builder.audioTracks = self.localAudioTrack != nil ? [self.localAudioTrack!] : [LocalAudioTrack]()
+
+            // Use the preferred audio codec
+            if let preferredAudioCodec = Settings.shared.audioCodec {
+                builder.preferredAudioCodecs = [preferredAudioCodec]
+            }
+
+            // Use the preferred encoding parameters
+            if let encodingParameters = Settings.shared.getEncodingParameters() {
+                builder.encodingParameters = encodingParameters
+            }
+
+            // Use the preferred signaling region
+            if let signalingRegion = Settings.shared.signalingRegion {
+                builder.region = signalingRegion
+            }
+
+            // The name of the Room where the Client will attempt to connect to. Please note that if you pass an empty
+            // Room `name`, the Client will create one for you. You can get the name or sid from any connected Room.
+            builder.roomName = "Stol"
+        }
+
+        // Connect to the Room using the options we provided.
+        room = TwilioVideoSDK.connect(options: connectOptions, delegate: self)
+
+        logMessage(messageText: "Attempting to connect to room")
+    }
+
+    @IBAction func muteButton(_ sender: UIButton) {
+        if (self.localAudioTrack != nil) {
+            self.localAudioTrack?.isEnabled = !(self.localAudioTrack?.isEnabled)!
+        }
+    }
+
+    @IBAction func voicechatSwitchTapped(_ sender: UISwitch) {
+        isAutoConnect = !isAutoConnect
+        logMessage(messageText: "Attempting to disconnect from room \(room!.name)")
+    }
+
+    @IBAction func disconnectSwitchTapped(_ sender: UISwitch) {
+        isAutoDisconnect = !isAutoDisconnect
+    }
+
+    func prepareLocalMedia() {
+
+        // We will share local audio and video when we connect to the Room.
+        // Create an audio track.
+        if (localAudioTrack == nil) {
+            localAudioTrack = LocalAudioTrack(options: nil, enabled: true, name: "Microphone")
+
+            if (localAudioTrack == nil) {
+                logMessage(messageText: "Failed to create audio track")
+            }
+        }
+    }
+
+    func cleanupRemoteParticipant() {
+        if self.remoteParticipant != nil {
+            self.remoteParticipant = nil
+        }
+    }
+
+    func logMessage(messageText: String) {
+        NSLog(messageText)
+    }
+}
+
+// MARK:- UITextFieldDelegate
+extension StolViewController : UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.phoneCall()
+        return true
+    }
+}
+
+// MARK:- RoomDelegate
+extension StolViewController : RoomDelegate {
+    func roomDidConnect(room: Room) {
+        logMessage(messageText: "Connected to room \(room.name) as \(room.localParticipant?.identity ?? "")")
+
+        // This example only renders 1 RemoteVideoTrack at a time. Listen for all events to decide which track to render.
+        for remoteParticipant in room.remoteParticipants {
+            remoteParticipant.delegate = self
+        }
+    }
+
+    func roomDidDisconnect(room: Room, error: Error?) {
+        logMessage(messageText: "Disconnected from room \(room.name), error = \(String(describing: error))")
+
+        self.cleanupRemoteParticipant()
+        self.room = nil
+    }
+
+    func roomDidFailToConnect(room: Room, error: Error) {
+        logMessage(messageText: "Failed to connect to room with error = \(String(describing: error))")
+        self.room = nil
+    }
+
+    func roomIsReconnecting(room: Room, error: Error) {
+        logMessage(messageText: "Reconnecting to room \(room.name), error = \(String(describing: error))")
+    }
+
+    func roomDidReconnect(room: Room) {
+        logMessage(messageText: "Reconnected to room \(room.name)")
+    }
+
+    func participantDidConnect(room: Room, participant: RemoteParticipant) {
+        // Listen for events from all Participants to decide which RemoteVideoTrack to render.
+        participant.delegate = self
+
+        logMessage(messageText: "Participant \(participant.identity) connected with \(participant.remoteAudioTracks.count) audio and \(participant.remoteVideoTracks.count) video tracks")
+    }
+
+    func participantDidDisconnect(room: Room, participant: RemoteParticipant) {
+        logMessage(messageText: "Room \(room.name), Participant \(participant.identity) disconnected")
+
+        // Nothing to do in this example. Subscription events are used to add/remove renderers.
+    }
+}
+
+// MARK:- RemoteParticipantDelegate
+extension StolViewController : RemoteParticipantDelegate {
+
+    func remoteParticipantDidPublishVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
+        // Remote Participant has offered to share the video Track.
+
+        logMessage(messageText: "Participant \(participant.identity) published \(publication.trackName) video track")
+    }
+
+    func remoteParticipantDidUnpublishVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
+        // Remote Participant has stopped sharing the video Track.
+        logMessage(messageText: "Participant \(participant.identity) unpublished \(publication.trackName) video track")
+    }
+
+    func remoteParticipantDidPublishAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
+        // Remote Participant has offered to share the audio Track.
+        logMessage(messageText: "Participant \(participant.identity) published \(publication.trackName) audio track")
+    }
+
+    func remoteParticipantDidUnpublishAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
+        // Remote Participant has stopped sharing the audio Track.
+        logMessage(messageText: "Participant \(participant.identity) unpublished \(publication.trackName) audio track")
+    }
+
+    func didSubscribeToVideoTrack(videoTrack: RemoteVideoTrack, publication: RemoteVideoTrackPublication, participant: RemoteParticipant) {
+        // The LocalParticipant is subscribed to the RemoteParticipant's video Track. Frames will begin to arrive now.
+        logMessage(messageText: "Subscribed to \(publication.trackName) video track for Participant \(participant.identity)")
+    }
+
+    func didUnsubscribeFromVideoTrack(videoTrack: RemoteVideoTrack, publication: RemoteVideoTrackPublication, participant: RemoteParticipant) {
+        // We are unsubscribed from the remote Participant's video Track. We will no longer receive the
+        // remote Participant's video.
+
+        logMessage(messageText: "Unsubscribed from \(publication.trackName) video track for Participant \(participant.identity)")
+
+        if self.remoteParticipant == participant {
+            cleanupRemoteParticipant()
+
+            // Find another Participant video to render, if possible.
+            if var remainingParticipants = room?.remoteParticipants,
+               let index = remainingParticipants.firstIndex(of: participant) {
+                remainingParticipants.remove(at: index)
+            }
+        }
+    }
+
+    func didSubscribeToAudioTrack(audioTrack: RemoteAudioTrack, publication: RemoteAudioTrackPublication, participant: RemoteParticipant) {
+        // We are subscribed to the remote Participant's audio Track. We will start receiving the
+        // remote Participant's audio now.
+
+        logMessage(messageText: "Subscribed to \(publication.trackName) audio track for Participant \(participant.identity)")
+    }
+
+    func didUnsubscribeFromAudioTrack(audioTrack: RemoteAudioTrack, publication: RemoteAudioTrackPublication, participant: RemoteParticipant) {
+        // We are unsubscribed from the remote Participant's audio Track. We will no longer receive the
+        // remote Participant's audio.
+
+        logMessage(messageText: "Unsubscribed from \(publication.trackName) audio track for Participant \(participant.identity)")
+    }
+
+    func remoteParticipantDidEnableVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
+        logMessage(messageText: "Participant \(participant.identity) enabled \(publication.trackName) video track")
+    }
+
+    func remoteParticipantDidDisableVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
+        logMessage(messageText: "Participant \(participant.identity) disabled \(publication.trackName) video track")
+    }
+
+    func remoteParticipantDidEnableAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
+        logMessage(messageText: "Participant \(participant.identity) enabled \(publication.trackName) audio track")
+    }
+
+    func remoteParticipantDidDisableAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
+        logMessage(messageText: "Participant \(participant.identity) disabled \(publication.trackName) audio track")
+    }
+
+    func didFailToSubscribeToAudioTrack(publication: RemoteAudioTrackPublication, error: Error, participant: RemoteParticipant) {
+        logMessage(messageText: "FailedToSubscribe \(publication.trackName) audio track, error = \(String(describing: error))")
+    }
+
+    func didFailToSubscribeToVideoTrack(publication: RemoteVideoTrackPublication, error: Error, participant: RemoteParticipant) {
+        logMessage(messageText: "FailedToSubscribe \(publication.trackName) video track, error = \(String(describing: error))")
+    }
+}
+
+// MARK:- CameraSourceDelegate
+extension StolViewController : CameraSourceDelegate {
+    func cameraSourceDidFail(source: CameraSource, error: Error) {
+        logMessage(messageText: "Camera source failed with error: \(error.localizedDescription)")
     }
 }
