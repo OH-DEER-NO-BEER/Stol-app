@@ -33,7 +33,7 @@ class StolViewController: UIViewController {
 
     // Configure access token manually for testing, if desired! Create one manually in the console
     // at https://www.twilio.com/console/video/runtime/testing-tools
-    var accessToken = ""
+    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzE5OTAxODMiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJjaGlnZW5hYmUiLCJ2aWRlbyI6e319LCJpYXQiOjE2MzE5OTAxODMsImV4cCI6MTYzMTk5Mzc4MywiaXNzIjoiU0s4MDY4MDU5NzcxNTA5MTJiNzE1YzYxYmI1ZTJmNzhmMCIsInN1YiI6IkFDOTYzNmQyYWM5NzYzMTYyM2JjYjc3YjBjNzYyNTIwZDYifQ.wlHgCDDNyv3OPVTyXdVJpM8FbXNA_E7FMhrrLCOXXDw"
 
     // Configure remote URL to fetch token from
     var tokenUrl = "http://localhost:8000/token.php"
@@ -113,15 +113,40 @@ class StolViewController: UIViewController {
         }
     }
 
-    @IBAction func callButtonTap(_ sender: Any) {
+    @IBAction func callButtonTap(_ sender: UIButton) {
         // Configure access token either from server or manually.
         // If the default wasn't changed, try fetching from server.
         if !calling {
             phoneCall()
+            let image = UIImage(named: "Connect=true")
+            let state = UIControl.State.normal
+
+            callButton.setImage(image, for: state)
         } else {
             calling = false
             self.room!.disconnect()
+
+            let image = UIImage(named: "Connect=false")
+            let state = UIControl.State.normal
+
+            callButton.setImage(image, for: state)
         }
+    }
+
+    @IBAction func muteButton(_ sender: UIButton) {
+        if (self.localAudioTrack != nil) {
+            self.localAudioTrack?.isEnabled = !(self.localAudioTrack?.isEnabled)!
+            sender.isSelected = !sender.isSelected;
+        }
+    }
+
+    @IBAction func voicechatSwitchTapped(_ sender: UISwitch) {
+        isAutoConnect = !isAutoConnect
+        logMessage(messageText: "Attempting to disconnect from room \(room!.name)")
+    }
+
+    @IBAction func disconnectSwitchTapped(_ sender: UISwitch) {
+        isAutoDisconnect = !isAutoDisconnect
     }
 
     func phoneCall() {
@@ -174,21 +199,6 @@ class StolViewController: UIViewController {
         room = TwilioVideoSDK.connect(options: connectOptions, delegate: self)
 
         logMessage(messageText: "Attempting to connect to room")
-    }
-
-    @IBAction func muteButton(_ sender: UIButton) {
-        if (self.localAudioTrack != nil) {
-            self.localAudioTrack?.isEnabled = !(self.localAudioTrack?.isEnabled)!
-        }
-    }
-
-    @IBAction func voicechatSwitchTapped(_ sender: UISwitch) {
-        isAutoConnect = !isAutoConnect
-        logMessage(messageText: "Attempting to disconnect from room \(room!.name)")
-    }
-
-    @IBAction func disconnectSwitchTapped(_ sender: UISwitch) {
-        isAutoDisconnect = !isAutoDisconnect
     }
 
     func prepareLocalMedia() {

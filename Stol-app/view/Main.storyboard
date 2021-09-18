@@ -122,7 +122,7 @@
                                         <rect key="frame" x="174" y="52" width="67" height="35"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Property 1=Variant3" translatesAutoresizingMaskIntoConstraints="NO" id="pTF-nw-FjD">
+                                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Property 1=Variant3" translatesAutoresizingMaskIntoConstraints="NO" id="pTF-nw-FjD">
                                         <rect key="frame" x="26" y="47" width="34" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -211,6 +211,7 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <connections>
+                        <outlet property="callButton" destination="wZH-aT-dhw" id="mwd-dQ-qVf"/>
                         <outlet property="muteButton" destination="emf-8r-dXy" id="uB1-nv-ln3"/>
                         <outlet property="participant" destination="Noa-79-4gK" id="aee-vy-CRi"/>
                     </connections>
