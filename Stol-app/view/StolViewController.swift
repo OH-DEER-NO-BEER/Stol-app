@@ -33,7 +33,7 @@ class StolViewController: UIViewController {
 
     // Configure access token manually for testing, if desired! Create one manually in the console
     // at https://www.twilio.com/console/video/runtime/testing-tools
-    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzE5ODU0MzgiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJhbGljZSIsInZpZGVvIjp7fX0sImlhdCI6MTYzMTk4NTQzOCwiZXhwIjoxNjMxOTg5MDM4LCJpc3MiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwIiwic3ViIjoiQUM5NjM2ZDJhYzk3NjMxNjIzYmNiNzdiMGM3NjI1MjBkNiJ9.ZaW6JVVpjx1Na6O6h1BIQP5LJo1bK46IyW8kAL0Dgwk"
+    var accessToken = ""
 
     // Configure remote URL to fetch token from
     var tokenUrl = "http://localhost:8000/token.php"
