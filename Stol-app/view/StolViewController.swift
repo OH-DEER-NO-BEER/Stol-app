@@ -21,6 +21,7 @@ class StolViewController: UIViewController {
     @IBOutlet weak var muteSwitch: UISwitch!
     @IBOutlet weak var speakerSwitch: UISwitch!
     @IBOutlet weak var playMusicButton: UIButton!
+    @IBOutlet weak var statusLabel: UILabel!
 
     @IBOutlet weak var participant: UIView!
     @IBOutlet weak var muteButton: UIButton!
@@ -66,6 +67,7 @@ class StolViewController: UIViewController {
                 .subscribe(onNext: { motion in
                     if self.motionManager.getMotionThreshold(deviceMotion: motion!) > 2 {
                         self.firebaseManager.standUp()
+                        self.statusLabel.text = "Standing"
 
                         if (self.isAutoConnect && !self.calling) {
                             //stopDevicemotion()
@@ -77,6 +79,8 @@ class StolViewController: UIViewController {
 
                     } else {
                         self.firebaseManager.sitDown()
+                        self.statusLabel.text = "Sitting"
+
                         if (self.isAutoDisconnect && self.calling) {
                             self.room!.disconnect()
                         }

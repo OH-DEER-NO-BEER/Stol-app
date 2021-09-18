@@ -214,6 +214,7 @@
                         <outlet property="callButton" destination="wZH-aT-dhw" id="mwd-dQ-qVf"/>
                         <outlet property="muteButton" destination="emf-8r-dXy" id="uB1-nv-ln3"/>
                         <outlet property="participant" destination="Noa-79-4gK" id="aee-vy-CRi"/>
+                        <outlet property="statusLabel" destination="lMk-Qp-ei9" id="ZTA-eH-mga"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
