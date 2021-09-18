@@ -116,7 +116,12 @@ class StolViewController: UIViewController {
     @IBAction func callButtonTap(_ sender: Any) {
         // Configure access token either from server or manually.
         // If the default wasn't changed, try fetching from server.
-        phoneCall()
+        if !calling {
+            phoneCall()
+        } else {
+            calling = false
+            self.room!.disconnect()
+        }
     }
 
     func phoneCall() {
