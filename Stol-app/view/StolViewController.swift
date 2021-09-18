@@ -1,21 +1,16 @@
-//
-//  ViewController.swift
-//  AudioDeviceExample
-//
-//  Copyright © 2020 Twilio, Inc. All rights reserved.
-//
-
 import CallKit
 import UIKit
-import CoreMotion
 
 import TwilioVoice
+import RxCocoa
+import RxSwift
+
 
 let twimlParamTo = "to"
 
-class ViewController: UIViewController {
+class StolViewController: UIViewController {
     //motion manager
-    let motionManager = CMMotionManager()
+    let motionManager = MotionManager()
 
     var accessToken: String? = ""
 
@@ -26,6 +21,8 @@ class ViewController: UIViewController {
     var userInitiatedDisconnect: Bool = false
     var callKitCompletionCallback: ((Bool) -> Void)? = nil
     var calling: Bool = false
+
+    var disposeBag = DisposeBag()
 
     @IBOutlet weak var outgoingTextField: UITextField!
     @IBOutlet weak var callButton: UIButton!
@@ -45,59 +42,21 @@ class ViewController: UIViewController {
         muteButton.setImage(UIImage(named: "Mute=false"), for: .selected)
         participant.isHidden = true
 
-        let intervalSeconds = 0.4
-        // Do any additional setup after loading the view.
-        if motionManager.isDeviceMotionAvailable {
-            motionManager.deviceMotionUpdateInterval = TimeInterval(intervalSeconds)
+        motionManager.motionRelay
+                .subscribe(onNext: { motion in
+                    //接続の判定
+                    if self.motionManager.getMotionThreshold(deviceMotion: motion!) > 2 && !self.calling {
+                        print("stand up")
 
-            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: { (motion: CMDeviceMotion?, error: Error?) in
+                        //stopDevicemotion()
+                        self.phoneCall()
+                        self.calling = true
 
-                //接続の判定
-                if self.getMotionThreshold(deviceMotion: motion!) > 2 && !self.calling {
-                    print("stand up")
-
-                    //stopDevicemotion()
-                    self.phoneCall()
-                    self.calling = true
-
-                } else {
-                    print("sit down")
-                }
-            })
-        }
-    }
-
-    func getMotionThreshold(deviceMotion: CMDeviceMotion)-> Double {
-        var sensorList: [Double] = []
-        //重力センサ
-        sensorList.append(deviceMotion.gravity.x)
-        sensorList.append(deviceMotion.gravity.y)
-        sensorList.append(deviceMotion.gravity.z)
-
-        sensorList.append(deviceMotion.rotationRate.x)
-        sensorList.append(deviceMotion.rotationRate.y)
-        sensorList.append(deviceMotion.rotationRate.z)
-
-        sensorList.append(deviceMotion.attitude.pitch)
-        sensorList.append(deviceMotion.attitude.roll)
-        sensorList.append(deviceMotion.attitude.yaw)
-
-        var sum: Double = -1.80131316
-        let coefficient = [0.30223284, -2.62991929, 1.52691657, -1.28418032, -0.1064995, -0.02088443, 3.26271071, 0.46824078, 0.22321698]
-
-        for i in 0..<9 {
-            sum = sum + coefficient[i] * sensorList[i]
-        }
-
-        print(sum)
-        return sum
-    }
-
-    // センサー取得を止める場合
-    func stopDevicemotion() {
-        if (motionManager.isDeviceMotionActive) {
-            motionManager.stopDeviceMotionUpdates()
-        }
+                    } else {
+                        print("sit down")
+                    }
+                })
+                .disposed(by: disposeBag)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -184,7 +143,7 @@ class ViewController: UIViewController {
         }
     }
 
-    @IBAction func callButtonTapped(_ sender: Any) {
+    @IBAction func callButtonTap(_ sender: Any) {
         guard activeCall == nil else {
             userInitiatedDisconnect = true
             performEndCallAction(uuid: activeCall!.uuid!)
@@ -206,10 +165,6 @@ class ViewController: UIViewController {
         }
     }
 
-    @IBAction func callbuttonTap(_ sender: Any) {
-        // TODO Call
-    }
-
     @IBAction func muteSwitchToggled(_ sender: UISwitch) {
         guard let activeCall = activeCall else {
             return
@@ -222,17 +177,17 @@ class ViewController: UIViewController {
         sender.isSelected = !sender.isSelected;
     }
 
-    @IBAction func voicechatswitchTapped(_ sender: UISwitch) {
+    @IBAction func voicechatSwitchTapped(_ sender: UISwitch) {
         toggleAudioRoute(toSpeaker: sender.isOn)
     }
 
-    @IBAction func disconnectswitchTapped(_ sender: UISwitch) {
+    @IBAction func disconnectSwitchTapped(_ sender: UISwitch) {
         audioDevice.playMusic()
     }
 }
 
 // MARK: - TVOCallDelegate
-extension ViewController: CallDelegate {
+extension StolViewController: CallDelegate {
     func callDidStartRinging(call: Call) {
         NSLog("callDidStartRinging:")
 
@@ -310,7 +265,7 @@ extension ViewController: CallDelegate {
 }
 
 // MARK: - CXProviderDelegate
-extension ViewController: CXProviderDelegate {
+extension StolViewController: CXProviderDelegate {
     func providerDidReset(_ provider: CXProvider) {
         NSLog("providerDidReset:")
         audioDevice.isEnabled = false

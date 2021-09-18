@@ -7,26 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		301CE1AFCC7D6580B12C1225 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CEDA9FF1B2EEA0884B327 /* MotionManager.swift */; };
+		301CE0640251265F13A94419 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CEF260D047C3244FE8343 /* MotionManager.swift */; };
+		301CE21924BA89808CD8D904 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CE791DDBD8C1DD054A894 /* FirebaseManager.swift */; };
+		301CE66E51177C0A4BC5C8DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301CEB7FAF69F15D01408FC2 /* LaunchScreen.storyboard */; };
+		301CEAEB697C2F71B09F563C /* StolViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CE19B31C3528CD59F0713 /* StolViewController.swift */; };
+		301CEBA3BCD233642CF00041 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301CE41060E6948B7CE222F1 /* Main.storyboard */; };
 		8F03119425C8B3E800DE2236 /* TwilioVoice in Frameworks */ = {isa = PBXBuildFile; productRef = 8F03119325C8B3E800DE2236 /* TwilioVoice */; };
 		8F09DB87243D1ACE00C6994E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB86243D1ACE00C6994E /* AppDelegate.swift */; };
-		8F09DB8B243D1ACE00C6994E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB8A243D1ACE00C6994E /* ViewController.swift */; };
-		8F09DB8E243D1ACE00C6994E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB8C243D1ACE00C6994E /* Main.storyboard */; };
 		8F09DB90243D1AD300C6994E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB8F243D1AD300C6994E /* Assets.xcassets */; };
-		8F09DB93243D1AD300C6994E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB91243D1AD300C6994E /* LaunchScreen.storyboard */; };
 		8F09DB9F243D202500C6994E /* mixLoop.caf in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB9C243D202500C6994E /* mixLoop.caf */; };
 		8F09DBA0243D202500C6994E /* ExampleAVAudioEngineDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB9E243D202500C6994E /* ExampleAVAudioEngineDevice.m */; };
 		E9A11186683AA51B79DD5148 /* Pods_Stol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A52F4A41328534975EE045A6 /* Pods_Stol.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		301CEDA9FF1B2EEA0884B327 /* MotionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
+		301CE19B31C3528CD59F0713 /* StolViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StolViewController.swift; sourceTree = "<group>"; };
+		301CE41060E6948B7CE222F1 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		301CE791DDBD8C1DD054A894 /* FirebaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
+		301CEB7FAF69F15D01408FC2 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		301CEF260D047C3244FE8343 /* MotionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		8F09DB83243D1ACE00C6994E /* Stol.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stol.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F09DB86243D1ACE00C6994E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8F09DB8A243D1ACE00C6994E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		8F09DB8D243D1ACE00C6994E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F09DB8F243D1AD300C6994E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		8F09DB92243D1AD300C6994E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F09DB94243D1AD300C6994E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F09DB9B243D202500C6994E /* ExampleAVAudioEngineDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleAVAudioEngineDevice.h; sourceTree = "<group>"; };
 		8F09DB9C243D202500C6994E /* mixLoop.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mixLoop.caf; sourceTree = "<group>"; };
@@ -58,10 +60,28 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		301CEAEB25A7B07378C2D71F /* motion */ = {
+		301CE2362BEFBC7B5BF223A5 /* firebase */ = {
 			isa = PBXGroup;
 			children = (
-				301CEDA9FF1B2EEA0884B327 /* MotionManager.swift */,
+				301CE791DDBD8C1DD054A894 /* FirebaseManager.swift */,
+			);
+			path = firebase;
+			sourceTree = "<group>";
+		};
+		301CE2FEAEB7F6F69232771B /* view */ = {
+			isa = PBXGroup;
+			children = (
+				301CE19B31C3528CD59F0713 /* StolViewController.swift */,
+				301CEB7FAF69F15D01408FC2 /* LaunchScreen.storyboard */,
+				301CE41060E6948B7CE222F1 /* Main.storyboard */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+		301CE8A4D2463D867E3BDA6B /* motion */ = {
+			isa = PBXGroup;
+			children = (
+				301CEF260D047C3244FE8343 /* MotionManager.swift */,
 			);
 			path = motion;
 			sourceTree = "<group>";
@@ -98,12 +118,11 @@
 			isa = PBXGroup;
 			children = (
 				8F09DB86243D1ACE00C6994E /* AppDelegate.swift */,
-				8F09DB8A243D1ACE00C6994E /* ViewController.swift */,
-				8F09DB8C243D1ACE00C6994E /* Main.storyboard */,
 				8F09DB8F243D1AD300C6994E /* Assets.xcassets */,
-				8F09DB91243D1AD300C6994E /* LaunchScreen.storyboard */,
 				8F09DB94243D1AD300C6994E /* Info.plist */,
-				301CEAEB25A7B07378C2D71F /* motion */,
+				301CE8A4D2463D867E3BDA6B /* motion */,
+				301CE2362BEFBC7B5BF223A5 /* firebase */,
+				301CE2FEAEB7F6F69232771B /* view */,
 			);
 			path = "Stol-app";
 			sourceTree = "<group>";
@@ -186,10 +205,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F09DB93243D1AD300C6994E /* LaunchScreen.storyboard in Resources */,
 				8F09DB90243D1AD300C6994E /* Assets.xcassets in Resources */,
-				8F09DB8E243D1ACE00C6994E /* Main.storyboard in Resources */,
 				8F09DB9F243D202500C6994E /* mixLoop.caf in Resources */,
+				301CE66E51177C0A4BC5C8DF /* LaunchScreen.storyboard in Resources */,
+				301CEBA3BCD233642CF00041 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,33 +261,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F09DB8B243D1ACE00C6994E /* ViewController.swift in Sources */,
 				8F09DB87243D1ACE00C6994E /* AppDelegate.swift in Sources */,
 				8F09DBA0243D202500C6994E /* ExampleAVAudioEngineDevice.m in Sources */,
-				301CE1AFCC7D6580B12C1225 /* MotionManager.swift in Sources */,
+				301CE0640251265F13A94419 /* MotionManager.swift in Sources */,
+				301CE21924BA89808CD8D904 /* FirebaseManager.swift in Sources */,
+				301CEAEB697C2F71B09F563C /* StolViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		8F09DB8C243D1ACE00C6994E /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8F09DB8D243D1ACE00C6994E /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		8F09DB91243D1AD300C6994E /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8F09DB92243D1AD300C6994E /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		8F09DB95243D1AD300C6994E /* Debug */ = {
