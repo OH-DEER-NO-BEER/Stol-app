@@ -15,6 +15,8 @@ class StolViewController: UIViewController {
 
     var calling: Bool = false
 
+    let roomName = "a"
+
     @IBOutlet weak var outgoingTextField: UITextField!
     @IBOutlet weak var callButton: UIButton!
     @IBOutlet weak var callControlView: UIView!
@@ -34,8 +36,7 @@ class StolViewController: UIViewController {
 
     // Configure access token manually for testing, if desired! Create one manually in the console
     // at https://www.twilio.com/console/video/runtime/testing-tools
-    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzE5OTAxODMiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJjaGlnZW5hYmUiLCJ2aWRlbyI6e319LCJpYXQiOjE2MzE5OTAxODMsImV4cCI6MTYzMTk5Mzc4MywiaXNzIjoiU0s4MDY4MDU5NzcxNTA5MTJiNzE1YzYxYmI1ZTJmNzhmMCIsInN1YiI6IkFDOTYzNmQyYWM5NzYzMTYyM2JjYjc3YjBjNzYyNTIwZDYifQ.wlHgCDDNyv3OPVTyXdVJpM8FbXNA_E7FMhrrLCOXXDw"
-
+    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzE5OTExNDYiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJjaGlnZSIsInZpZGVvIjp7fX0sImlhdCI6MTYzMTk5MTE0NiwiZXhwIjoxNjMxOTk0NzQ2LCJpc3MiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwIiwic3ViIjoiQUM5NjM2ZDJhYzk3NjMxNjIzYmNiNzdiMGM3NjI1MjBkNiJ9.C4f9aSk9qeXyWrv8qoRVreloDIqNh1AmuG4omgmrVC4"
     // Configure remote URL to fetch token from
     var tokenUrl = "http://localhost:8000/token.php"
 
@@ -80,10 +81,6 @@ class StolViewController: UIViewController {
                     } else {
                         self.firebaseManager.sitDown()
                         self.statusLabel.text = "Sitting"
-
-                        if (self.isAutoDisconnect && self.calling) {
-                            self.room!.disconnect()
-                        }
 
                         print("sit down")
                     }
@@ -146,7 +143,6 @@ class StolViewController: UIViewController {
 
     @IBAction func voicechatSwitchTapped(_ sender: UISwitch) {
         isAutoConnect = !isAutoConnect
-        logMessage(messageText: "Attempting to disconnect from room \(room!.name)")
     }
 
     @IBAction func disconnectSwitchTapped(_ sender: UISwitch) {
@@ -196,7 +192,7 @@ class StolViewController: UIViewController {
 
             // The name of the Room where the Client will attempt to connect to. Please note that if you pass an empty
             // Room `name`, the Client will create one for you. You can get the name or sid from any connected Room.
-            builder.roomName = "Stol"
+            builder.roomName = self.roomName
         }
 
         // Connect to the Room using the options we provided.
@@ -373,3 +369,4 @@ extension StolViewController : CameraSourceDelegate {
         logMessage(messageText: "Camera source failed with error: \(error.localizedDescription)")
     }
 }
+

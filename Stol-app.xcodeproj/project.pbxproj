@@ -18,8 +18,6 @@
 		301CEBA3BCD233642CF00041 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301CE41060E6948B7CE222F1 /* Main.storyboard */; };
 		8F09DB87243D1ACE00C6994E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB86243D1ACE00C6994E /* AppDelegate.swift */; };
 		8F09DB90243D1AD300C6994E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB8F243D1AD300C6994E /* Assets.xcassets */; };
-		8F09DB9F243D202500C6994E /* mixLoop.caf in Resources */ = {isa = PBXBuildFile; fileRef = 8F09DB9C243D202500C6994E /* mixLoop.caf */; };
-		8F09DBA0243D202500C6994E /* ExampleAVAudioEngineDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F09DB9E243D202500C6994E /* ExampleAVAudioEngineDevice.m */; };
 		E9A11186683AA51B79DD5148 /* Pods_Stol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A52F4A41328534975EE045A6 /* Pods_Stol.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,10 +34,6 @@
 		8F09DB86243D1ACE00C6994E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F09DB8F243D1AD300C6994E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F09DB94243D1AD300C6994E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8F09DB9B243D202500C6994E /* ExampleAVAudioEngineDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleAVAudioEngineDevice.h; sourceTree = "<group>"; };
-		8F09DB9C243D202500C6994E /* mixLoop.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mixLoop.caf; sourceTree = "<group>"; };
-		8F09DB9D243D202500C6994E /* AudioDevices-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AudioDevices-Bridging-Header.h"; sourceTree = "<group>"; };
-		8F09DB9E243D202500C6994E /* ExampleAVAudioEngineDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleAVAudioEngineDevice.m; sourceTree = "<group>"; };
 		A52F4A41328534975EE045A6 /* Pods_Stol.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Stol.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF8EE2FDE8030B0319D1B020 /* Pods-Stol.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stol.release.xcconfig"; path = "Target Support Files/Pods-Stol/Pods-Stol.release.xcconfig"; sourceTree = "<group>"; };
 		F40F31F872681403E3014E1A /* Pods-Stol.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stol.debug.xcconfig"; path = "Target Support Files/Pods-Stol/Pods-Stol.debug.xcconfig"; sourceTree = "<group>"; };
@@ -114,7 +108,6 @@
 			isa = PBXGroup;
 			children = (
 				8F09DB85243D1ACE00C6994E /* Stol-app */,
-				8F09DB9A243D202500C6994E /* AudioDevices */,
 				8F09DB84243D1ACE00C6994E /* Products */,
 				416CD760BF1380DD59988FAE /* Pods */,
 				284ECE457063B9B6A81F3905 /* Frameworks */,
@@ -142,18 +135,6 @@
 				301CE384389E8171AE03993A /* Utils */,
 			);
 			path = "Stol-app";
-			sourceTree = "<group>";
-		};
-		8F09DB9A243D202500C6994E /* AudioDevices */ = {
-			isa = PBXGroup;
-			children = (
-				8F09DB9B243D202500C6994E /* ExampleAVAudioEngineDevice.h */,
-				8F09DB9E243D202500C6994E /* ExampleAVAudioEngineDevice.m */,
-				8F09DB9D243D202500C6994E /* AudioDevices-Bridging-Header.h */,
-				8F09DB9C243D202500C6994E /* mixLoop.caf */,
-			);
-			name = AudioDevices;
-			path = "Stol-app/AudioDevices";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -223,7 +204,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F09DB90243D1AD300C6994E /* Assets.xcassets in Resources */,
-				8F09DB9F243D202500C6994E /* mixLoop.caf in Resources */,
 				301CE66E51177C0A4BC5C8DF /* LaunchScreen.storyboard in Resources */,
 				301CEBA3BCD233642CF00041 /* Main.storyboard in Resources */,
 				301CE227E43F256C7E45CF90 /* GoogleService-Info.plist in Resources */,
@@ -280,7 +260,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F09DB87243D1ACE00C6994E /* AppDelegate.swift in Sources */,
-				8F09DBA0243D202500C6994E /* ExampleAVAudioEngineDevice.m in Sources */,
 				301CE0640251265F13A94419 /* MotionManager.swift in Sources */,
 				301CE21924BA89808CD8D904 /* FirebaseManager.swift in Sources */,
 				301CEAEB697C2F71B09F563C /* StolViewController.swift in Sources */,
@@ -419,7 +398,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.deers.stolapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Stol-app/AudioDevices/AudioDevices-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -438,7 +417,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.deers.stolapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Stol-app/AudioDevices/AudioDevices-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
