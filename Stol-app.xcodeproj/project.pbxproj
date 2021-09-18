@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		301CE0640251265F13A94419 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CEF260D047C3244FE8343 /* MotionManager.swift */; };
 		301CE21924BA89808CD8D904 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CE791DDBD8C1DD054A894 /* FirebaseManager.swift */; };
+		301CE227E43F256C7E45CF90 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 301CEB2407E11B1AE0D54C69 /* GoogleService-Info.plist */; };
 		301CE66E51177C0A4BC5C8DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301CEB7FAF69F15D01408FC2 /* LaunchScreen.storyboard */; };
 		301CEAEB697C2F71B09F563C /* StolViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CE19B31C3528CD59F0713 /* StolViewController.swift */; };
 		301CEBA3BCD233642CF00041 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301CE41060E6948B7CE222F1 /* Main.storyboard */; };
@@ -24,6 +25,7 @@
 		301CE19B31C3528CD59F0713 /* StolViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StolViewController.swift; sourceTree = "<group>"; };
 		301CE41060E6948B7CE222F1 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		301CE791DDBD8C1DD054A894 /* FirebaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
+		301CEB2407E11B1AE0D54C69 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		301CEB7FAF69F15D01408FC2 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		301CEF260D047C3244FE8343 /* MotionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		8F09DB83243D1ACE00C6994E /* Stol.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stol.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,6 +125,7 @@
 				301CE8A4D2463D867E3BDA6B /* motion */,
 				301CE2362BEFBC7B5BF223A5 /* firebase */,
 				301CE2FEAEB7F6F69232771B /* view */,
+				301CEB2407E11B1AE0D54C69 /* GoogleService-Info.plist */,
 			);
 			path = "Stol-app";
 			sourceTree = "<group>";
@@ -209,6 +212,7 @@
 				8F09DB9F243D202500C6994E /* mixLoop.caf in Resources */,
 				301CE66E51177C0A4BC5C8DF /* LaunchScreen.storyboard in Resources */,
 				301CEBA3BCD233642CF00041 /* Main.storyboard in Resources */,
+				301CE227E43F256C7E45CF90 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

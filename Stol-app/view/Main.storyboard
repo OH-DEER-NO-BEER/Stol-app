@@ -21,7 +21,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="Connect=false"/>
                                 <connections>
-                                    <action selector="callbuttonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gvA-oB-Dl5"/>
+                                    <action selector="callButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gvA-oB-Dl5"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fe-Zl-QRn">
@@ -74,7 +74,7 @@
                                         <rect key="frame" x="297" y="122" width="49" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <connections>
-                                            <action selector="voicechatswitchTapped:" destination="BYZ-38-t0r" eventType="valueChanged" id="Rcj-h7-trX"/>
+                                            <action selector="voicechatSwitchTapped:" destination="BYZ-38-t0r" eventType="valueChanged" id="Rcj-h7-trX"/>
                                         </connections>
                                     </switch>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Auto disconnect voice chat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6c-mi-lMb">
@@ -95,7 +95,7 @@
                                         <rect key="frame" x="297" y="161" width="49" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <connections>
-                                            <action selector="disconnectswitchTapped:" destination="BYZ-38-t0r" eventType="valueChanged" id="97E-dY-Asg"/>
+                                            <action selector="disconnectSwitchTapped:" destination="BYZ-38-t0r" eventType="valueChanged" id="97E-dY-Asg"/>
                                         </connections>
                                     </switch>
                                 </subviews>

@@ -45,12 +45,16 @@ class StolViewController: UIViewController {
         motionManager.motionRelay
                 .subscribe(onNext: { motion in
                     //接続の判定
-                    if self.motionManager.getMotionThreshold(deviceMotion: motion!) > 2 && !self.calling {
+                    if self.motionManager.getMotionThreshold(deviceMotion: motion!) > 2 {
                         print("stand up")
 
-                        //stopDevicemotion()
-                        self.phoneCall()
-                        self.calling = true
+                        if (!self.calling) {
+                            //stopDevicemotion()
+                            self.phoneCall()
+                            self.calling = true
+                        } else {
+                            print("calling now")
+                        }
 
                     } else {
                         print("sit down")

@@ -18,17 +18,23 @@ class MotionManager {
     let motionRelay = PublishRelay<CMDeviceMotion?>()
 
     private let disposeBag = DisposeBag()
+    let intervalSeconds = 0.4
 
     init() {
-        let intervalSeconds = 0.4
+        print("MotionManager Setup")
+
         // Do any additional setup after loading the view.
         if motionManager.isDeviceMotionAvailable {
+            print("isDeviceMotionAvailable")
+
             motionManager.deviceMotionUpdateInterval = TimeInterval(intervalSeconds)
 
             motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: { (motion: CMDeviceMotion?, error: Error?) in
+                guard let motion = motion, error == nil else { return }
                 self.motionRelay.accept(motion)
             })
         }
+
     }
 
     // センサー取得を止める場合
