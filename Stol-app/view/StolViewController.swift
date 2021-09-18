@@ -62,7 +62,7 @@ class StolViewController: UIViewController {
         // Do any additional setup after loading the view.
         muteButton.setImage(UIImage(named: "Mute=true"), for: .normal);
         muteButton.setImage(UIImage(named: "Mute=false"), for: .selected)
-        participant.isHidden = true
+        // participant.isHidden = true
 
         motionManager.motionRelay
                 .subscribe(onNext: { motion in
