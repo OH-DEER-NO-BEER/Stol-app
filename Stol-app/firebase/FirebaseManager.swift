@@ -13,25 +13,11 @@ class FirebaseManager {
     var DBRef: DatabaseReference!
 
     var participantStatus: [String: [ String : String ]] = [:]
+    var statusRelay = PublishRelay<[String: [ String : String ]]>()
 
     init() {
         DBRef = Database.database().reference()
     }
-
-    func standUp() {
-        let data = [UIDevice.current.identifierForVendor!.uuidString: ["status": "standUp"]]
-        DBRef.child("status").setValue(data)
-    }
-
-    func sitDown() {
-        let data = [UIDevice.current.identifierForVendor!.uuidString: ["status": "sitDown"]]
-        DBRef.child("status").setValue(data)
-    }
-
-    private let disposeBag = DisposeBag()
-    private var subscription: Disposable?
-
-    var statusRelay = PublishRelay<[String: [ String : String ]]>()
 
     func startReadStatus() {
         let period = DispatchTimeInterval.seconds(1)
@@ -53,5 +39,15 @@ class FirebaseManager {
                     }
                 }
 
+    }
+
+    func standUp() {
+        let data = [UIDevice.current.identifierForVendor!.uuidString: ["status": "standUp"]]
+        DBRef.child("status").setValue(data)
+    }
+
+    func sitDown() {
+        let data = [UIDevice.current.identifierForVendor!.uuidString: ["status": "sitDown"]]
+        DBRef.child("status").setValue(data)
     }
 }

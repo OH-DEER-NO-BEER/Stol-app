@@ -65,13 +65,12 @@ class StolViewController: UIViewController {
 
         if motionManager.motionManager.isDeviceMotionAvailable {
             firebaseManager.startReadStatus()
+            firebaseManager.statusRelay
+                    .subscribe(onNext: { status in
+                        print(status)
+                    })
+                    .disposed(by: disposeBag)
         }
-
-        firebaseManager.statusRelay
-                .subscribe(onNext: { status in
-                    print(status)
-                })
-                .disposed(by: disposeBag)
     }
 
     required init?(coder aDecoder: NSCoder) {
