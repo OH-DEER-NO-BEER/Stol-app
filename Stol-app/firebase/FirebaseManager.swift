@@ -5,23 +5,53 @@
 
 import Foundation
 import Firebase
+import RxSwift
+import RxCocoa
 
 class FirebaseManager {
 
     var DBRef: DatabaseReference!
 
+    var participantStatus: [String: [ String : String ]] = [:]
+
     init() {
-        //インスタンスを作成
         DBRef = Database.database().reference()
     }
 
     func standUp() {
-        let data = ["status": "standUp"]
-        DBRef.child("").setValue(data)
+        let data = [UIDevice.current.identifierForVendor!.uuidString: ["status": "standUp"]]
+        DBRef.child("status").setValue(data)
     }
 
     func sitDown() {
-        let data = ["status": "sitDown"]
-        DBRef.child("").setValue(data)
+        let data = [UIDevice.current.identifierForVendor!.uuidString: ["status": "sitDown"]]
+        DBRef.child("status").setValue(data)
+    }
+
+    private let disposeBag = DisposeBag()
+    private var subscription: Disposable?
+
+    var statusRelay = PublishRelay<[String: [ String : String ]]>()
+
+    func startReadStatus() {
+        let period = DispatchTimeInterval.seconds(1)
+        let defaultPlace = DBRef.child("status")
+
+        let _ = Observable<Int>
+                .interval(period, scheduler: MainScheduler.instance)
+                .subscribe { _ in
+                    var status: [String: [ String : String ]] = [:]
+                    defaultPlace.getData { (error, snapshot) in
+                        if let error = error {
+                            print("Error getting data \(error)")
+                        } else if snapshot.exists() {
+                            status = snapshot.value! as! [String: [ String : String ]]
+                            self.statusRelay.accept(status)
+                        } else {
+                            print("No data available")
+                        }
+                    }
+                }
+
     }
 }

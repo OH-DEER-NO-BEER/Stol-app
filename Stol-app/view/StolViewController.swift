@@ -45,9 +45,8 @@ class StolViewController: UIViewController {
 
         motionManager.motionRelay
                 .subscribe(onNext: { motion in
-                    //接続の判定
                     if self.motionManager.getMotionThreshold(deviceMotion: motion!) > 2 {
-                        print("stand up")
+                        self.firebaseManager.standUp()
 
                         if (!self.calling) {
                             //stopDevicemotion()
@@ -58,8 +57,19 @@ class StolViewController: UIViewController {
                         }
 
                     } else {
+                        self.firebaseManager.sitDown()
                         print("sit down")
                     }
+                })
+                .disposed(by: disposeBag)
+
+        if motionManager.motionManager.isDeviceMotionAvailable {
+            firebaseManager.startReadStatus()
+        }
+
+        firebaseManager.statusRelay
+                .subscribe(onNext: { status in
+                    print(status)
                 })
                 .disposed(by: disposeBag)
     }
