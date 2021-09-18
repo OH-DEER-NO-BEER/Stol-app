@@ -4,7 +4,24 @@
 //
 
 import Foundation
+import Firebase
 
 class FirebaseManager {
 
+    var DBRef: DatabaseReference!
+
+    init() {
+        //インスタンスを作成
+        DBRef = Database.database().reference()
+    }
+
+    func standUp() {
+        let data = ["status": "standUp"]
+        DBRef.child("").setValue(data)
+    }
+
+    func sitDown() {
+        let data = ["status": "sitDown"]
+        DBRef.child("").setValue(data)
+    }
 }

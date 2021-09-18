@@ -11,6 +11,7 @@ let twimlParamTo = "to"
 class StolViewController: UIViewController {
     //motion manager
     let motionManager = MotionManager()
+    let firebaseManager = FirebaseManager()
 
     var accessToken: String? = ""
 
