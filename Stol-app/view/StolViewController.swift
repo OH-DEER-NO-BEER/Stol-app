@@ -6,7 +6,7 @@ import RxSwift
 
 let twimlParamTo = "to"
 
-class StolViewController: UIViewController {
+class StolViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
     //motion manager
     let motionManager = MotionManager()
     let firebaseManager = FirebaseManager()
@@ -14,6 +14,13 @@ class StolViewController: UIViewController {
     var disposeBag = DisposeBag()
 
     var calling: Bool = false
+    
+    var name_list = [String](){
+        didSet {
+            tableview?.reloadData()
+        }
+    }
+    @IBOutlet weak var tableview: UITableView!
 
     let roomName = "a"
 
@@ -27,7 +34,7 @@ class StolViewController: UIViewController {
 
     @IBOutlet weak var participant: UIView!
     @IBOutlet weak var muteButton: UIButton!
-
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -36,7 +43,7 @@ class StolViewController: UIViewController {
 
     // Configure access token manually for testing, if desired! Create one manually in the console
     // at https://www.twilio.com/console/video/runtime/testing-tools
-    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzE5OTExNDYiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJjaGlnZSIsInZpZGVvIjp7fX0sImlhdCI6MTYzMTk5MTE0NiwiZXhwIjoxNjMxOTk0NzQ2LCJpc3MiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwIiwic3ViIjoiQUM5NjM2ZDJhYzk3NjMxNjIzYmNiNzdiMGM3NjI1MjBkNiJ9.C4f9aSk9qeXyWrv8qoRVreloDIqNh1AmuG4omgmrVC4"
+    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzIwMDgzNDUiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJraXNoaWRhIiwidmlkZW8iOnt9fSwiaWF0IjoxNjMyMDA4MzQ1LCJleHAiOjE2MzIwMTQzNDUsImlzcyI6IlNLODA2ODA1OTc3MTUwOTEyYjcxNWM2MWJiNWUyZjc4ZjAiLCJzdWIiOiJBQzk2MzZkMmFjOTc2MzE2MjNiY2I3N2IwYzc2MjUyMGQ2In0.NRy38Vk_4cH22skWfEPYAWwz411-ASv5KdmZyE_AYOI"
     // Configure remote URL to fetch token from
     var tokenUrl = "http://localhost:8000/token.php"
 
@@ -60,8 +67,8 @@ class StolViewController: UIViewController {
         self.title = "Stol"
 
         // Do any additional setup after loading the view.
-        muteButton.setImage(UIImage(named: "Mute=true"), for: .normal);
-        muteButton.setImage(UIImage(named: "Mute=false"), for: .selected)
+        muteButton.setImage(UIImage(named: "Mute=false"), for: .normal);
+        muteButton.setImage(UIImage(named: "Mute=true"), for: .selected)
         // participant.isHidden = true
 
         motionManager.motionRelay
@@ -200,6 +207,23 @@ class StolViewController: UIViewController {
 
         logMessage(messageText: "Attempting to connect to room")
     }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return name_list.count;
+        }
+        // 追加④：セルに値を設定するデータソースメソッド（必須）
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            // セルを取得する
+            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+
+            // TableViewCellの中に配置したLabelを取得する
+            let label1 = cell.contentView.viewWithTag(1) as! UILabel
+
+            // Labelにテキストを設定する
+            label1.text = name_list[indexPath.row]
+
+            return cell
+        }
 
     func prepareLocalMedia() {
 
@@ -237,22 +261,26 @@ extension StolViewController : UITextFieldDelegate {
 extension StolViewController : RoomDelegate {
     func roomDidConnect(room: Room) {
         logMessage(messageText: "Connected to room \(room.name) as \(room.localParticipant?.identity ?? "")")
-
+        name_list.append((String(describing: room.localParticipant!.identity)))
         // This example only renders 1 RemoteVideoTrack at a time. Listen for all events to decide which track to render.
         for remoteParticipant in room.remoteParticipants {
+            name_list.append(remoteParticipant.identity)
+            
             remoteParticipant.delegate = self
         }
     }
 
     func roomDidDisconnect(room: Room, error: Error?) {
         logMessage(messageText: "Disconnected from room \(room.name), error = \(String(describing: error))")
-
+        
+        name_list=[String]()
         self.cleanupRemoteParticipant()
         self.room = nil
     }
 
     func roomDidFailToConnect(room: Room, error: Error) {
         logMessage(messageText: "Failed to connect to room with error = \(String(describing: error))")
+        name_list=[String]()
         self.room = nil
     }
 
@@ -267,11 +295,17 @@ extension StolViewController : RoomDelegate {
     func participantDidConnect(room: Room, participant: RemoteParticipant) {
         // Listen for events from all Participants to decide which RemoteVideoTrack to render.
         participant.delegate = self
-
+        name_list.append(participant.identity)
         logMessage(messageText: "Participant \(participant.identity) connected with \(participant.remoteAudioTracks.count) audio and \(participant.remoteVideoTracks.count) video tracks")
     }
 
     func participantDidDisconnect(room: Room, participant: RemoteParticipant) {
+        for i in 0...name_list.count{
+            if(name_list[i]==participant.identity){
+                name_list.remove(at: i)
+                break
+            }
+        }
         logMessage(messageText: "Room \(room.name), Participant \(participant.identity) disconnected")
 
         // Nothing to do in this example. Subscription events are used to add/remove renderers.
