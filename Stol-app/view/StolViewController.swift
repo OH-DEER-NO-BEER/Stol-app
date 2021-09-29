@@ -43,7 +43,7 @@ class StolViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
 
     // Configure access token manually for testing, if desired! Create one manually in the console
     // at https://www.twilio.com/console/video/runtime/testing-tools
-    var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzgwNjgwNTk3NzE1MDkxMmI3MTVjNjFiYjVlMmY3OGYwLTE2MzIwMDgzNDUiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJraXNoaWRhIiwidmlkZW8iOnt9fSwiaWF0IjoxNjMyMDA4MzQ1LCJleHAiOjE2MzIwMTQzNDUsImlzcyI6IlNLODA2ODA1OTc3MTUwOTEyYjcxNWM2MWJiNWUyZjc4ZjAiLCJzdWIiOiJBQzk2MzZkMmFjOTc2MzE2MjNiY2I3N2IwYzc2MjUyMGQ2In0.NRy38Vk_4cH22skWfEPYAWwz411-ASv5KdmZyE_AYOI"
+    var accessToken = "."
     // Configure remote URL to fetch token from
     var tokenUrl = "http://localhost:8000/token.php"
 
